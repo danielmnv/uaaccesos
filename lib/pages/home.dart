@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:uaaccesos/classes/navbar.dart';
+import 'package:uaaccesos/pages/account.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.title}) : super(key: key);
@@ -27,20 +28,31 @@ class _HomePageState extends State<HomePage> {
         title: Text(widget.title),
         actions: <Widget>[
           Padding(
-              padding: EdgeInsets.only(right: 20.0),
-              child: GestureDetector(
-                onTap: () {},
-                child: Icon(
-                  Icons.search,
-                  size: 26.0,
-                ),
-              )),
+            padding: EdgeInsets.only(right: 20.0),
+            child: GestureDetector(
+              onTap: () {},
+              child: Icon(
+                Icons.search,
+                size: 26.0,
+              ),
+            ),
+          ),
           Padding(
-              padding: EdgeInsets.only(right: 20.0),
-              child: GestureDetector(
-                onTap: () {},
-                child: Icon(Icons.account_circle_outlined, size: 26.0),
-              )),
+            padding: EdgeInsets.only(right: 20.0),
+            child: GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => AccountPage(
+                      title: 'Account',
+                    ),
+                  ),
+                );
+              },
+              child: Icon(Icons.account_circle_outlined, size: 26.0),
+            ),
+          ),
         ],
       ),
       body: Center(
