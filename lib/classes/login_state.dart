@@ -18,11 +18,11 @@ class LoginState with ChangeNotifier {
     bindingState();
   }
 
-  void logIn() async {
+  void logIn(String email, String password) async {
     _loading = false;
     notifyListeners();
 
-    _user = await _handleSignIn();
+    _user = await _handleSignIn(email, password);
 
     _loggedIn = _user != null;
     _loading = false;
@@ -49,11 +49,11 @@ class LoginState with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<fAuth.User> _handleSignIn() async {
+  Future<fAuth.User> _handleSignIn(String email, String password) async {
     fAuth.UserCredential auth;
 
     try {
-      auth = await _auth.signInWithEmailAndPassword(email: "al175004@edu.uaa.mx", password: "hola10");
+      auth = await _auth.signInWithEmailAndPassword(email: email, password: password);
     } catch (e) {
       print(e.toString());
     }
