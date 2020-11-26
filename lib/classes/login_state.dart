@@ -14,11 +14,20 @@ class LoginState with ChangeNotifier {
   bool isLoggedIn() => _loggedIn;
   bool isLoading() => _loading;
 
+  String _snackText;
+
   LoginState() {
     bindingState();
   }
 
-  void logIn(String email, String password) async {
+  Widget _buildSnack() {
+    return SnackBar(
+      content: Text(_snackText),
+      duration: Duration(seconds: 4),
+    );
+  }
+
+  Future<Widget> logIn(String email, String password) async {
     _loading = false;
     notifyListeners();
 
@@ -30,6 +39,8 @@ class LoginState with ChangeNotifier {
     if (_loggedIn) _prefs.setBool('isLoggedIn', true);
 
     notifyListeners();
+
+    return _buildSnack();
   }
 
   void logOut() {
@@ -55,9 +66,14 @@ class LoginState with ChangeNotifier {
     try {
       auth = await _auth.signInWithEmailAndPassword(email: email, password: password);
     } catch (e) {
-      print(e.toString());
+      _snackText = 'The credentials are invalid.';
     }
 
-    return (auth != null) ? auth.user : null;
+    if (auth != null) {
+      _snackText = 'Welcome back ' + auth.user.email;
+      return auth.user;
+    }
+
+    return null;
   }
 }

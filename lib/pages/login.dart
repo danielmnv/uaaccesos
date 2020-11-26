@@ -64,7 +64,11 @@ class _LoginPageState extends State<LoginPage> {
             gradient: LinearGradient(
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,
-              colors: [Color(0xfff8b323), Color(0xffde0059), Color(0xff003375)],
+              colors: [
+                Color(0xfff8b323),
+                Color(0xffde0059),
+                Color(0xff003375),
+              ],
             )),
         child: Text(
           'Login',
@@ -72,7 +76,12 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
       onTap: () => {
-        if (_formKey.currentState.validate()) Provider.of<LoginState>(context, listen: false).logIn(_emailController.text, _passwdController.text)
+        if (_formKey.currentState.validate())
+          {
+            Provider.of<LoginState>(context, listen: false)
+                .logIn(_emailController.text, _passwdController.text)
+                .then((snack) => ScaffoldMessenger.of(context).showSnackBar(snack))
+          }
       },
     );
   }
