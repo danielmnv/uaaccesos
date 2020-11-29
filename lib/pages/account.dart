@@ -1,3 +1,5 @@
+import 'package:after_init/after_init.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uaaccesos/classes/login_state.dart';
@@ -11,7 +13,98 @@ class AccountPage extends StatefulWidget {
   _AccountPageState createState() => _AccountPageState();
 }
 
-class _AccountPageState extends State<AccountPage> {
+class _AccountPageState extends State<AccountPage> with AfterInitMixin<AccountPage> {
+  Stream<DocumentSnapshot> _query;
+
+  @override
+  void didInitState() {
+    _query = FirebaseFirestore.instance.collection('users').doc(Provider.of<LoginState>(context).currentUser().uid).get().asStream();
+  }
+
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.close_outlined),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        title: Text(widget.title),
+      ),
+      body: StreamBuilder<DocumentSnapshot>(
+        stream: _query,
+        builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+          if (snapshot.hasData) {
+            return _account(snapshot.data.data());
+          }
+
+          return Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _account(Map<String, dynamic> data) {
+    return Center(
+      child: ListView(
+        children: [
+          ListTile(
+            leading: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              child: Container(
+                width: 48,
+                height: 48,
+                padding: EdgeInsets.symmetric(vertical: 4.0),
+                alignment: Alignment.center,
+                child: CircleAvatar(
+                  backgroundImage: NetworkImage('https://icons.iconarchive.com/icons/diversity-avatars/avatars/1024/batman-icon.png'),
+                  backgroundColor: Colors.black,
+                ),
+              ),
+            ),
+            title: Text(data['email']),
+            dense: true,
+          ),
+          Divider(),
+          ListTile(
+            title: Text(data['username']),
+            dense: false,
+          ),
+          ListTile(
+            title: Text(data['name']),
+            dense: false,
+          ),
+          ListTile(
+            title: Text(data['ap_pat']),
+            dense: false,
+          ),
+          Divider(),
+          ListTile(
+            leading: GestureDetector(
+              behavior: HitTestBehavior.translucent,
+              child: Container(
+                width: 48,
+                height: 48,
+                padding: EdgeInsets.symmetric(vertical: 4.0),
+                alignment: Alignment.center,
+                child: Icon(
+                  Icons.logout,
+                  color: Colors.red[900],
+                ),
+              ),
+            ),
+            onTap: () {
+              _logOutDialog();
+            },
+            title: Text('Log out'),
+            dense: false,
+          ),
+        ],
+      ),
+    );
+  }
+
   _logOutDialog() {
     showDialog(
       context: context,
@@ -34,75 +127,6 @@ class _AccountPageState extends State<AccountPage> {
             },
           ),
         ],
-      ),
-    );
-  }
-
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-          icon: Icon(Icons.close_outlined),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: ListView(
-          children: [
-            ListTile(
-              leading: GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                child: Container(
-                  width: 48,
-                  height: 48,
-                  padding: EdgeInsets.symmetric(vertical: 4.0),
-                  alignment: Alignment.center,
-                  child: CircleAvatar(
-                    backgroundImage: NetworkImage('https://icons.iconarchive.com/icons/diversity-avatars/avatars/1024/batman-icon.png'),
-                    backgroundColor: Colors.black,
-                  ),
-                ),
-              ),
-              title: Text('email@domain.com'),
-              dense: true,
-            ),
-            Divider(),
-            ListTile(
-              title: Text('nickname'),
-              dense: false,
-            ),
-            ListTile(
-              title: Text('Name'),
-              dense: false,
-            ),
-            ListTile(
-              title: Text('Last Name'),
-              dense: false,
-            ),
-            Divider(),
-            ListTile(
-              leading: GestureDetector(
-                behavior: HitTestBehavior.translucent,
-                child: Container(
-                  width: 48,
-                  height: 48,
-                  padding: EdgeInsets.symmetric(vertical: 4.0),
-                  alignment: Alignment.center,
-                  child: Icon(
-                    Icons.logout,
-                    color: Colors.red[900],
-                  ),
-                ),
-              ),
-              onTap: () {
-                _logOutDialog();
-              },
-              title: Text('Log out'),
-              dense: false,
-            ),
-          ],
-        ),
       ),
     );
   }

@@ -23,6 +23,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  after_init: ^0.1.2
   provider: ^4.3.2+2
   shared_preferences: ^0.5.12+4
   email_validator: ^1.0.5
