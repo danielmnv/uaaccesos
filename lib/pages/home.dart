@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:uaaccesos/classes/navbar.dart';
+import 'package:uaaccesos/classes/tab_page.dart';
 import 'package:uaaccesos/pages/account.dart';
 
 class HomePage extends StatefulWidget {
@@ -12,11 +13,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String _lastSelected = 'TAB: 0';
+  int _lastSelected = 0;
 
   void _selectedTab(int index) {
     setState(() {
-      _lastSelected = 'TAB: $index';
+      _lastSelected = index;
     });
   }
 
@@ -55,8 +56,11 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      body: Center(
-        child: Text('You have pressed the button $_count times.\n $_lastSelected'),
+      body: IndexedStack(
+        index: _lastSelected,
+        children: [
+          for (final tabItem in TabNavigationItem.items) tabItem.page,
+        ],
       ),
       bottomNavigationBar: BottomNavBar(
         color: Colors.grey,

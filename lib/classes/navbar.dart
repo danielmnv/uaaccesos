@@ -85,11 +85,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
     );
   }
 
-  Widget _buildTabItem({
-    NavBarItem item,
-    int index,
-    ValueChanged<int> onPressed,
-  }) {
+  Widget _buildTabItem({NavBarItem item, int index, ValueChanged<int> onPressed}) {
     Color color = _selectedIndex == index ? widget.selectedColor : widget.color;
     return Expanded(
       child: SizedBox(
