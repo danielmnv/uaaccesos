@@ -1,5 +1,3 @@
-import 'package:after_init/after_init.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uaaccesos/classes/login_state.dart';
@@ -13,14 +11,7 @@ class AccountPage extends StatefulWidget {
   _AccountPageState createState() => _AccountPageState();
 }
 
-class _AccountPageState extends State<AccountPage> with AfterInitMixin<AccountPage> {
-  Stream<DocumentSnapshot> _query;
-
-  @override
-  void didInitState() {
-    _query = FirebaseFirestore.instance.collection('users').doc(Provider.of<LoginState>(context).currentUser().uid).get().asStream();
-  }
-
+class _AccountPageState extends State<AccountPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -30,18 +21,7 @@ class _AccountPageState extends State<AccountPage> with AfterInitMixin<AccountPa
         ),
         title: Text(widget.title),
       ),
-      body: StreamBuilder<DocumentSnapshot>(
-        stream: _query,
-        builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
-          if (snapshot.hasData) {
-            return _account(snapshot.data.data());
-          }
-
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        },
-      ),
+      body: _account(Provider.of<LoginState>(context).userData()),
     );
   }
 

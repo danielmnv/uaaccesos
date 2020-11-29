@@ -1,9 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fAuth;
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginState with ChangeNotifier {
   final fAuth.FirebaseAuth _auth = fAuth.FirebaseAuth.instance;
+  Map<String, dynamic> _data;
 
   fAuth.User _user;
   SharedPreferences _prefs;
@@ -11,6 +13,8 @@ class LoginState with ChangeNotifier {
   bool _loading = true;
 
   fAuth.User currentUser() => _user;
+  Map<String, dynamic> userData() => _data;
+  String userProp(String prop) => _data[prop];
   bool isLoggedIn() => _loggedIn;
   bool isLoading() => _loading;
 
@@ -35,12 +39,26 @@ class LoginState with ChangeNotifier {
 
     _loggedIn = _user != null;
     _loading = false;
+    loadUserData(false);
 
-    if (_loggedIn) _prefs.setBool('isLoggedIn', true);
+    if (_loggedIn) {
+      _prefs.setBool('isLoggedIn', true);
+    }
 
     notifyListeners();
 
     return _buildSnack();
+  }
+
+  void loadUserData([bool notify = true]) async {
+    _data = null;
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(_user.uid)
+        .get()
+        .then((DocumentSnapshot snapshot) => {if (snapshot.exists) _data = snapshot.data()});
+
+    if (notify) notifyListeners();
   }
 
   void logOut() {
@@ -54,6 +72,8 @@ class LoginState with ChangeNotifier {
     if (_prefs.containsKey('isLoggedIn')) {
       _user = _auth.currentUser;
       _loggedIn = _user != null;
+
+      loadUserData(false);
     }
 
     _loading = false;
