@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:uaaccesos/classes/login_state.dart';
@@ -18,6 +19,8 @@ void main() async {
     sslEnabled: false,
     persistenceEnabled: false,
   );
+
+  FirebaseFunctions.instance.useFunctionsEmulator(origin: Platform.isAndroid ? 'http://10.0.2.2:5001' : 'http://localhost:5001');
 
   runApp(UAAccess());
 }
