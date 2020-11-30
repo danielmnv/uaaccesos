@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:uaaccesos/classes/login_state.dart';
 import 'package:uaaccesos/classes/navbar.dart';
 import 'package:uaaccesos/classes/tab_page.dart';
 import 'package:uaaccesos/pages/account.dart';
@@ -20,8 +22,6 @@ class _HomePageState extends State<HomePage> {
       _lastSelected = index;
     });
   }
-
-  int _count = 0;
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,7 +64,7 @@ class _HomePageState extends State<HomePage> {
       ),
       bottomNavigationBar: BottomNavBar(
         color: Colors.grey,
-        selectedColor: Colors.indigoAccent,
+        selectedColor: Colors.indigo,
         notchedShape: CircularNotchedRectangle(),
         onTabSelected: _selectedTab,
         items: [
@@ -72,13 +72,12 @@ class _HomePageState extends State<HomePage> {
           NavBarItem(iconData: Icons.list_outlined, text: 'Record'),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => setState(() {
-          _count++;
-        }),
-        tooltip: 'Increment Counter',
-        child: Icon(Icons.add),
-      ),
+      floatingActionButton: _lastSelected == 0
+          ? FloatingActionButton(
+              onPressed: () => setState(() {}),
+              child: Icon(Provider.of<LoginState>(context).userProp('admin') ? Icons.camera_outlined : Icons.sync_outlined),
+            )
+          : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
   }

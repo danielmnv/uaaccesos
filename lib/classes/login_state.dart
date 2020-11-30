@@ -14,7 +14,7 @@ class LoginState with ChangeNotifier {
 
   fAuth.User currentUser() => _user;
   Map<String, dynamic> userData() => _data;
-  String userProp(String prop) => _data[prop];
+  dynamic userProp(String prop) => _data[prop];
   bool isLoggedIn() => _loggedIn;
   bool isLoading() => _loading;
 
