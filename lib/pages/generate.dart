@@ -1,41 +1,52 @@
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:uaaccesos/pages/qrcode.dart';
 
 class GenerateCode extends StatefulWidget {
+  GenerateCode({this.controller});
+
+  final CodeController controller;
+
   @override
-  _GenerateCodeState createState() => new _GenerateCodeState();
+  _GenerateCodeState createState() => new _GenerateCodeState(controller);
 }
 
 class _GenerateCodeState extends State<GenerateCode> with SingleTickerProviderStateMixin {
-  AnimationController _controller;
+  AnimationController _animationController;
   Animation<double> _animation;
 
   HttpsCallable _buildToken = FirebaseFunctions.instance.httpsCallable('createToken');
+  CodeController _controller;
   String _token;
+
+  _GenerateCodeState(CodeController controller) {
+    _controller = controller;
+    _controller.method = _getToken;
+  }
 
   @override
   void initState() {
     super.initState();
 
-    _getToken();
+    _getToken(false);
 
-    _controller = AnimationController(duration: const Duration(seconds: 15), vsync: this);
-    _animation = Tween(begin: 1.0, end: 0.0).animate(_controller)
+    _animationController = AnimationController(duration: const Duration(seconds: 15), vsync: this);
+    _animation = Tween(begin: 1.0, end: 0.0).animate(_animationController)
       ..addListener(() {
         setState(() {
           // the state that has changed here is the animation object’s value
           if (_animation.value <= 0.01) {
-            _getToken();
+            _getToken(false);
           }
         });
       });
-    _controller.repeat();
+    _animationController.repeat();
   }
 
   @override
   void dispose() {
-    _controller.stop();
+    _animationController.stop();
     super.dispose();
   }
 
@@ -68,12 +79,17 @@ class _GenerateCodeState extends State<GenerateCode> with SingleTickerProviderSt
     );
   }
 
-  Future<void> _getToken() async {
+  Future<void> _getToken([bool reset = true]) async {
     final https = await _buildToken();
     final payload = https.data;
 
     if (payload['ok']) {
       _token = payload['jwt'];
+    }
+
+    if (reset) {
+      _animationController.reset();
+      _animationController.repeat();
     }
   }
 }

@@ -4,6 +4,8 @@ import 'package:uaaccesos/classes/login_state.dart';
 import 'package:uaaccesos/classes/navbar.dart';
 import 'package:uaaccesos/classes/tab_page.dart';
 import 'package:uaaccesos/pages/account.dart';
+import 'package:uaaccesos/pages/qrcode.dart';
+import 'package:uaaccesos/pages/record.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.title}) : super(key: key);
@@ -15,6 +17,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final CodeController _codeController = CodeController();
+
   int _lastSelected = 0;
 
   void _selectedTab(int index) {
@@ -59,7 +63,10 @@ class _HomePageState extends State<HomePage> {
       body: IndexedStack(
         index: _lastSelected,
         children: [
-          for (final tabItem in TabNavigationItem.items) tabItem.page,
+          QrCodePage(
+            controller: _codeController,
+          ),
+          RecordPage(),
         ],
       ),
       bottomNavigationBar: BottomNavBar(
@@ -74,8 +81,8 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButton: _lastSelected == 0
           ? FloatingActionButton(
-              onPressed: () => setState(() {}),
-              child: Icon(Provider.of<LoginState>(context).userProp('admin') ? Icons.camera_outlined : Icons.sync_outlined),
+              onPressed: () => setState(() => _codeController.method()),
+              child: Icon(Provider.of<LoginState>(context).userProp('admin') ? Icons.qr_code_scanner_rounded : Icons.sync_outlined),
             )
           : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
