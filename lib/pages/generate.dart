@@ -18,7 +18,7 @@ class _GenerateCodeState extends State<GenerateCode> with SingleTickerProviderSt
 
   HttpsCallable _buildToken = FirebaseFunctions.instance.httpsCallable('createToken');
   CodeController _controller;
-  String _token;
+  String _token = "t2vjd@Nzh#Bo9mT^8S3@";
 
   _GenerateCodeState(CodeController controller) {
     _controller = controller;
