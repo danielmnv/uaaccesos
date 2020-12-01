@@ -39,7 +39,7 @@ class LoginState with ChangeNotifier {
 
     _loggedIn = _user != null;
     _loading = false;
-    loadUserData(false);
+    _data = await loadUserData();
 
     if (_loggedIn) {
       _prefs.setBool('isLoggedIn', true);
@@ -48,17 +48,6 @@ class LoginState with ChangeNotifier {
     notifyListeners();
 
     return _buildSnack();
-  }
-
-  void loadUserData([bool notify = true]) async {
-    _data = null;
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(_user.uid)
-        .get()
-        .then((DocumentSnapshot snapshot) => {if (snapshot.exists) _data = snapshot.data()});
-
-    if (notify) notifyListeners();
   }
 
   void logOut() {
@@ -73,11 +62,18 @@ class LoginState with ChangeNotifier {
       _user = _auth.currentUser;
       _loggedIn = _user != null;
 
-      loadUserData(false);
+      _data = await loadUserData();
     }
 
     _loading = false;
     notifyListeners();
+  }
+
+  Future<Map<String, dynamic>> loadUserData() async {
+    DocumentSnapshot doc = await FirebaseFirestore.instance.collection('users').doc(_user.uid).get();
+    if (doc.exists) return doc.data();
+
+    return null;
   }
 
   Future<fAuth.User> _handleSignIn(String email, String password) async {
