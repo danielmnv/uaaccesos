@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uaaccesos/classes/login_state.dart';
 import 'package:uaaccesos/classes/navbar.dart';
-import 'package:uaaccesos/classes/tab_page.dart';
 import 'package:uaaccesos/pages/account.dart';
 import 'package:uaaccesos/pages/qrcode.dart';
 import 'package:uaaccesos/pages/record.dart';
