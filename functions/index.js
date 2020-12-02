@@ -8,7 +8,8 @@ const jwt = require('jsonwebtoken');
 fireabse.initializeApp();
 
 const firestore = fireabse.firestore();
-const collection = firestore.collection('users');
+const _users = firestore.collection('users');
+const _logs = firestore.collection('logs');
 
 exports.createToken = functions.https.onCall((data, context) => {
     let token = jwt.sign({ uid: context.auth.uid }, process.env.PRIVATE_KEY, { expiresIn: process.env.EXPIRATION });
@@ -26,12 +27,25 @@ exports.validateToken = functions.https.onCall(async (data, context) => {
         // Decoded token
         if (decoded) {
             // Get user doc from firestore
-            let { exists, user } = await collection.doc(decoded.uid).get().then(doc => {
-                return { exists: doc.exists, user: doc.data() }
+            let { exists, ref, user } = await _users.doc(decoded.uid).get().then(doc => {
+                return { exists: doc.exists, ref: doc.ref, user: doc.data() }
             });
 
-            // If exist allow access
-            if (exists) return { ok: true, msg: `Acceso permitido: ${user.name} ${user.ap_pat}` };
+            // Check if exist
+            if (exists) {
+                let register = await _logs.add({
+                    date: fireabse.firestore.Timestamp.fromDate(new Date()),
+                    userDoc: ref,
+                    successful: true,
+                    door: data.door,
+                });
+
+                // Return if log added
+                if (register.id) return { ok: true, msg: `Acceso permitido: ${user.name} ${user.ap_pat}`, user: user, log: register };
+                // Return error
+                else return { ok: false, msg: `Ocurrio un error. Intente de nuevo` };
+
+            }
             // Don't allow
             else return { ok: false, msg: "Usuario inexistente" };
         }
