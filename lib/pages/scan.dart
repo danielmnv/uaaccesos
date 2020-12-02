@@ -28,14 +28,14 @@ class _ScanCodeState extends State<ScanCode> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
-      children: [Text('Scanner value: $_scanned')],
+      children: [Text('Scanner value: $_scanned')], //TODO: Add design and info in the page
     );
   }
 
   void scanner() async {
     try {
       String codeScanner = await BarcodeScanner.scan(); //barcode scnner
-      print(codeScanner.isNotEmpty);
+
       if (codeScanner.isNotEmpty) {
         final https = await _checkToken.call({"token": codeScanner, "door": "Norte"}); // TODO: Send admin door
         final payload = https.data;
