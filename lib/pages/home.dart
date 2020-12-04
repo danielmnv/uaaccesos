@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:uaaccesos/classes/colors.dart';
 import 'package:uaaccesos/classes/login_state.dart';
 import 'package:uaaccesos/classes/navbar.dart';
 import 'package:uaaccesos/pages/account.dart';
@@ -30,6 +31,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.title),
+        backgroundColor: ColorPalette.primary,
         actions: <Widget>[
           Padding(
             padding: EdgeInsets.only(right: 20.0),
@@ -70,7 +72,7 @@ class _HomePageState extends State<HomePage> {
       ),
       bottomNavigationBar: BottomNavBar(
         color: Colors.grey,
-        selectedColor: Colors.indigo,
+        selectedColor: ColorPalette.primary,
         notchedShape: CircularNotchedRectangle(),
         onTabSelected: _selectedTab,
         items: [
@@ -80,6 +82,7 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButton: _lastSelected == 0
           ? FloatingActionButton(
+              backgroundColor: ColorPalette.primary,
               onPressed: () => setState(() => _codeController.method()),
               child: Icon(Provider.of<LoginState>(context).userProp('admin') ? Icons.qr_code_scanner_rounded : Icons.sync_outlined),
             )
