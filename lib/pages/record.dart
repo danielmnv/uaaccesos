@@ -14,46 +14,131 @@ class RecordPage extends StatefulWidget {
 
 class _RecordPageState extends State<RecordPage> {
   CollectionReference _logs = FirebaseFirestore.instance.collection('logs');
+  Stream<QuerySnapshot> _query;
+
+  DateTime _selectedDate = DateTime.now();
+  int _chipSelected = 0;
+
+  void _allDates(int index) {
+    setState(() {
+      _chipSelected = index;
+
+      _dateQuery(null, null, true);
+    });
+  }
+
+  void _todayDate(int index) {
+    DateTime now = DateTime.now();
+
+    setState(() {
+      _chipSelected = index;
+
+      _dateQuery(DateTime(now.year, now.month, now.day), DateTime(now.year, now.month, now.day + 1));
+    });
+  }
+
+  Future<void> _selectDate(BuildContext context, int index) async {
+    final DateTime picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate, // Refer step 1
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2025),
+    );
+    if (picked != null)
+      setState(() {
+        _chipSelected = index;
+        _selectedDate = picked;
+
+        _dateQuery(picked, DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day + 1));
+      });
+  }
+
+  void _dateQuery(DateTime start, DateTime end, [bool init = false]) {
+    _query = !init
+        ? _logs.where("date", isGreaterThanOrEqualTo: start).where("date", isLessThan: end).orderBy("date", descending: true).snapshots()
+        : _logs.orderBy("date", descending: true).snapshots();
+  }
+
+  @override
+  void initState() {
+    _dateQuery(null, null, true);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Column(
         children: [
-          Expanded(
-            child: StreamBuilder<QuerySnapshot>(
-              stream: _logs.snapshots(),
-              builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                if (snapshot.hasData) {
-                  List<QueryDocumentSnapshot> docs = snapshot.data.docs;
-                  List<Map<String, dynamic>> registers = docs
-                      .map(
-                        (doc) => {
-                          'door': doc['door'],
-                          'date': DateFormat.yMMMd().add_Hm().format(doc['date'].toDate()),
-                          'id': doc['email'].split("@")[0],
-                          'initials': doc['user']['name'][0] + doc['user']['ap_pat'][0],
-                        },
-                      )
-                      .toList();
-
-                  return ListView.separated(
-                    itemCount: docs.length,
-                    itemBuilder: (BuildContext context, int index) => _register(registers.elementAt(index)),
-                    separatorBuilder: (BuildContext context, int index) {
-                      return Container(
-                        color: Colors.blueAccent.withOpacity(0.15),
-                        height: 3.0,
-                      );
-                    },
-                  );
-                }
-
-                return CircularProgressIndicator();
-              },
-            ),
-          ),
+          _chipFilters(),
+          _logsList(),
         ],
+      ),
+    );
+  }
+
+  Widget _chipFilters() {
+    return Row(
+      // mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        SizedBox(
+          width: 15,
+        ),
+        _chipBuilder("All", 0, (bool selected) => _allDates(0)),
+        SizedBox(
+          width: 15,
+        ),
+        _chipBuilder("Today", 1, (bool selected) => _todayDate(1)),
+        SizedBox(
+          width: 15,
+        ),
+        _chipBuilder("Custom Date", 2, (bool selected) => _selectDate(context, 2)),
+      ],
+    );
+  }
+
+  Widget _chipBuilder(String label, int index, Function callable) {
+    return ChoiceChip(
+      label: Text(label),
+      elevation: 1,
+      selected: _chipSelected == index,
+      onSelected: callable,
+    );
+  }
+
+  Widget _logsList() {
+    return Expanded(
+      child: StreamBuilder<QuerySnapshot>(
+        stream: _query,
+        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.hasData) {
+            List<QueryDocumentSnapshot> docs = snapshot.data.docs;
+            List<Map<String, dynamic>> registers = docs
+                .map(
+                  (doc) => {
+                    'door': doc['door'],
+                    'date': DateFormat.yMMMd().add_Hm().format(doc['date'].toDate()),
+                    'id': doc['email'].split("@")[0],
+                    'initials': doc['user']['name'][0] + doc['user']['ap_pat'][0],
+                  },
+                )
+                .toList();
+
+            return ListView.separated(
+              itemCount: docs.length,
+              itemBuilder: (BuildContext context, int index) => _register(registers.elementAt(index)),
+              separatorBuilder: (BuildContext context, int index) {
+                return Container(
+                  color: Colors.blueAccent.withOpacity(0.15),
+                  height: 3.0,
+                );
+              },
+            );
+          }
+
+          return CircularProgressIndicator();
+        },
       ),
     );
   }
