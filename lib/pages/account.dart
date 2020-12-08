@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:uaaccesos/classes/colors.dart';
 import 'package:uaaccesos/classes/login_state.dart';
 
 class AccountPage extends StatefulWidget {
@@ -15,6 +16,7 @@ class _AccountPageState extends State<AccountPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: ColorPalette.primary,
         leading: IconButton(
           icon: Icon(Icons.close_outlined),
           onPressed: () => Navigator.of(context).pop(),
