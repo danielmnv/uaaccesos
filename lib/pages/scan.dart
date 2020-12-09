@@ -1,6 +1,8 @@
 import 'package:barcode_scan/barcode_scan.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:uaaccesos/classes/login_state.dart';
 import 'package:uaaccesos/pages/qrcode.dart';
 
 class ScanCode extends StatefulWidget {
@@ -67,7 +69,7 @@ class _ScanCodeState extends State<ScanCode> {
       String codeScanner = await BarcodeScanner.scan(); //barcode scnner
 
       if (codeScanner.isNotEmpty) {
-        final https = await _checkToken.call({"token": codeScanner, "door": "Norte"}); // TODO: Send admin door
+        final https = await _checkToken.call({"token": codeScanner, "door": Provider.of<LoginState>(context).userProp('door')});
         final payload = https.data;
 
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -76,6 +78,11 @@ class _ScanCodeState extends State<ScanCode> {
           backgroundColor: payload['ok'] ? Colors.green[600] : Colors.red[900],
         ));
       }
-    } catch (e) {}
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        duration: Duration(seconds: 8),
+        content: Text('Ocurrió un error. Intenta de nuevo'),
+      ));
+    }
   }
 }
