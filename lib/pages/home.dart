@@ -83,7 +83,7 @@ class _HomePageState extends State<HomePage> {
       floatingActionButton: _lastSelected == 0
           ? FloatingActionButton(
               backgroundColor: ColorPalette.primary,
-              onPressed: () => setState(() => _codeController.method()),
+              onPressed: () => _codeController.method(),
               child: Icon(
                 Provider.of<LoginState>(context).userProp('admin') ? Icons.qr_code_scanner_rounded : Icons.sync_outlined,
                 color: Colors.white,
