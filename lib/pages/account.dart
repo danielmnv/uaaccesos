@@ -48,6 +48,10 @@ class _AccountPageState extends State<AccountPage> {
             title: Text(data['email']),
             dense: true,
           ),
+          ListTile(
+            title: Text(data['admin'] ? data['door'] : data['career']),
+            dense: false,
+          ),
           Divider(),
           ListTile(
             title: Text(data['username']),
