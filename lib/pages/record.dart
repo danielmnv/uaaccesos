@@ -1,7 +1,10 @@
+import 'package:after_init/after_init.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:uaaccesos/classes/colors.dart';
+import 'package:uaaccesos/classes/login_state.dart';
 
 class RecordPage extends StatefulWidget {
   static Route<dynamic> route() => MaterialPageRoute(builder: (context) => RecordPage());
@@ -12,11 +15,12 @@ class RecordPage extends StatefulWidget {
   _RecordPageState createState() => _RecordPageState();
 }
 
-class _RecordPageState extends State<RecordPage> {
+class _RecordPageState extends State<RecordPage> with AfterInitMixin {
   CollectionReference _logs = FirebaseFirestore.instance.collection('logs');
   Stream<QuerySnapshot> _query;
 
   DateTime _selectedDate = DateTime.now();
+  Map<String, dynamic> _userType;
   int _chipSelected = 0;
 
   void _allDates(int index) {
@@ -55,15 +59,19 @@ class _RecordPageState extends State<RecordPage> {
   }
 
   void _dateQuery(DateTime start, DateTime end, [bool init = false]) {
-    _query = !init
-        ? _logs.where("date", isGreaterThanOrEqualTo: start).where("date", isLessThan: end).orderBy("date", descending: true).snapshots()
-        : _logs.orderBy("date", descending: true).snapshots();
+    Query q = !init
+        ? _logs.where("date", isGreaterThanOrEqualTo: start).where("date", isLessThan: end).orderBy("date", descending: true)
+        : _logs.orderBy("date", descending: true);
+
+    _query = (!_userType['isAdmin']) ? q.where("email", isEqualTo: _userType['email']).snapshots() : q.snapshots();
   }
 
   @override
-  void initState() {
+  void didInitState() {
+    bool isAdmin = Provider.of<LoginState>(context).userProp('admin');
+    _userType = {"isAdmin": isAdmin, "email": (!isAdmin) ? Provider.of<LoginState>(context).userProp("email") : ''};
+
     _dateQuery(null, null, true);
-    super.initState();
   }
 
   @override
