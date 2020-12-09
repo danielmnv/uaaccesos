@@ -1,6 +1,7 @@
 import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:uaaccesos/classes/colors.dart';
 import 'package:uaaccesos/classes/login_state.dart';
 
 class LoginPage extends StatefulWidget {
@@ -38,6 +39,7 @@ class _LoginPageState extends State<LoginPage> {
               fillColor: Color(0xfff3f3f4),
               filled: true,
             ),
+            style: TextStyle(color: Colors.black),
             validator: (value) {
               if (value.isEmpty) {
                 return 'Required.';
@@ -60,14 +62,21 @@ class _LoginPageState extends State<LoginPage> {
         alignment: Alignment.center,
         decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(5)),
-            boxShadow: <BoxShadow>[BoxShadow(color: Colors.grey.shade200, offset: Offset(2, 4), blurRadius: 5, spreadRadius: 10)],
+            boxShadow: <BoxShadow>[
+              BoxShadow(
+                color: Colors.grey.shade900,
+                offset: Offset(1, 2),
+                blurRadius: 5,
+                spreadRadius: 5,
+              )
+            ],
             gradient: LinearGradient(
               begin: Alignment.centerLeft,
               end: Alignment.centerRight,
               colors: [
-                Color(0xfff8b323),
-                Color(0xffde0059),
-                Color(0xff003375),
+                ColorPalette.accent,
+                ColorPalette.secondary,
+                ColorPalette.primary,
               ],
             )),
         child: Text(
@@ -90,15 +99,15 @@ class _LoginPageState extends State<LoginPage> {
     return RichText(
       textAlign: TextAlign.center,
       text: TextSpan(
-        text: 'd',
+        text: '',
         children: [
           TextSpan(
             text: 'uaa',
-            style: TextStyle(color: Colors.black, fontSize: 30),
+            style: TextStyle(color: Colors.white, fontSize: 30),
           ),
           TextSpan(
             text: 'ccess',
-            style: TextStyle(color: Color(0xff003375), fontSize: 30),
+            style: TextStyle(color: ColorPalette.secondary, fontSize: 30),
           ),
         ],
       ),

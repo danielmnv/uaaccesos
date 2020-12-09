@@ -65,14 +65,22 @@ class _GenerateCodeState extends State<GenerateCode> with SingleTickerProviderSt
             children: [
               Icon(
                 Icons.qr_code_rounded,
-                color: Colors.indigo,
+                color: Colors.white,
                 size: 30,
               ),
-              Text('QR Code', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.indigo)),
+              Text('QR Code',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    color: Colors.white,
+                  )),
             ],
           ),
         ),
-        QrImage(data: _token),
+        QrImage(
+          data: _token,
+          backgroundColor: Colors.white,
+        ),
         SizedBox(height: 20),
         LinearProgressIndicator(value: _animation.value),
       ],

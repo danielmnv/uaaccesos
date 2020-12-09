@@ -72,7 +72,7 @@ class _AccountPageState extends State<AccountPage> {
                 alignment: Alignment.center,
                 child: Icon(
                   Icons.logout,
-                  color: Colors.red[900],
+                  color: ColorPalette.secondary,
                 ),
               ),
             ),
@@ -105,7 +105,7 @@ class _AccountPageState extends State<AccountPage> {
             onPressed: () {
               Navigator.of(context).pop();
               Provider.of<LoginState>(context, listen: false).logOut();
-              Navigator.of(context).pop(); // FIXME: Found another way to do this
+              Navigator.of(context).pop(); // FIXME: Find another way to do this
             },
           ),
         ],

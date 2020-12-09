@@ -71,8 +71,8 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       bottomNavigationBar: BottomNavBar(
-        color: Colors.grey,
-        selectedColor: ColorPalette.primary,
+        color: Colors.grey[600],
+        selectedColor: Colors.white,
         notchedShape: CircularNotchedRectangle(),
         onTabSelected: _selectedTab,
         items: [
@@ -84,7 +84,10 @@ class _HomePageState extends State<HomePage> {
           ? FloatingActionButton(
               backgroundColor: ColorPalette.primary,
               onPressed: () => setState(() => _codeController.method()),
-              child: Icon(Provider.of<LoginState>(context).userProp('admin') ? Icons.qr_code_scanner_rounded : Icons.sync_outlined),
+              child: Icon(
+                Provider.of<LoginState>(context).userProp('admin') ? Icons.qr_code_scanner_rounded : Icons.sync_outlined,
+                color: Colors.white,
+              ),
             )
           : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

@@ -42,7 +42,8 @@ class _RecordPageState extends State<RecordPage> {
       context: context,
       initialDate: _selectedDate, // Refer step 1
       firstDate: DateTime(2000),
-      lastDate: DateTime(2025),
+      lastDate: DateTime(2021),
+      confirmText: 'LIST',
     );
     if (picked != null)
       setState(() {
@@ -104,6 +105,7 @@ class _RecordPageState extends State<RecordPage> {
       elevation: 1,
       selected: _chipSelected == index,
       onSelected: callable,
+      selectedColor: Colors.white,
     );
   }
 
@@ -163,7 +165,7 @@ class _RecordPageState extends State<RecordPage> {
         register['date'],
         style: TextStyle(
           fontSize: 16.0,
-          color: Colors.blueGrey,
+          color: Colors.white54,
         ),
       ),
       trailing: Container(
@@ -177,9 +179,9 @@ class _RecordPageState extends State<RecordPage> {
                     child: Icon(
                   Icons.sensor_door_sharp,
                   size: 18,
-                  color: Colors.blueGrey[600],
+                  color: Colors.white70,
                 )),
-                TextSpan(text: register['door'], style: TextStyle(color: Colors.blueGrey[600], fontWeight: FontWeight.w500, fontSize: 16.0)),
+                TextSpan(text: register['door'], style: TextStyle(color: Colors.white70, fontWeight: FontWeight.w500, fontSize: 16.0)),
               ],
             ),
           ),

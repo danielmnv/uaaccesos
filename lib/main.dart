@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:uaaccesos/classes/colors.dart';
 import 'package:uaaccesos/classes/login_state.dart';
 import 'package:uaaccesos/pages/home.dart';
 import 'package:uaaccesos/pages/login.dart';
@@ -33,7 +34,12 @@ class UAAccess extends StatelessWidget {
       create: (BuildContext context) => LoginState(),
       child: MaterialApp(
         title: 'Flutter Demo',
-        theme: ThemeData(primarySwatch: Colors.teal),
+        theme: ThemeData(
+          brightness: Brightness.dark,
+          primarySwatch: Colors.blueGrey,
+          primaryColor: ColorPalette.primary,
+          accentColor: ColorPalette.secondary,
+        ),
         routes: {
           '/': (BuildContext context) {
             var state = Provider.of<LoginState>(context);
