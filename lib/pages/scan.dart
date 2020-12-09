@@ -27,39 +27,41 @@ class _ScanCodeState extends State<ScanCode> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Icon(
-                Icons.qr_code_rounded,
-                color: Colors.white,
-                size: 30,
-              ),
-              Text('Scanner',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
-                    color: Colors.white,
-                  )),
-            ],
-          ),
-          SizedBox(height: 15.0),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(15.0),
-            child: Image.asset('assets/images/demo.jpg'),
-          ),
-          SizedBox(height: 15.0),
-          Text(
-            'Para escanear un código QR, selecciona el botón flotante para abrir la cámara.\n\nAlinea perfectamente la zona marcada con la cámara, apuntando al código de manera que este quede centrado, espera un tiempo para que el escáner pueda leer de forma correcta el contenido.',
-            textAlign: TextAlign.justify,
-            style: TextStyle(fontSize: 17),
-          )
-        ],
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Icon(
+                  Icons.qr_code_rounded,
+                  color: Colors.white,
+                  size: 30,
+                ),
+                Text('Scanner',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: Colors.white,
+                    )),
+              ],
+            ),
+            SizedBox(height: 15.0),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(15.0),
+              child: Image.asset('assets/images/demo.jpg'),
+            ),
+            SizedBox(height: 15.0),
+            Text(
+              'Para escanear un código QR, selecciona el botón flotante para abrir la cámara.\n\nAlinea perfectamente la zona marcada con la cámara, apuntando al código de manera que este quede centrado, espera un tiempo para que el escáner pueda leer de forma correcta el contenido.',
+              textAlign: TextAlign.justify,
+              style: TextStyle(fontSize: 17),
+            )
+          ],
+        ),
       ),
     );
   }

@@ -52,38 +52,49 @@ class _GenerateCodeState extends State<GenerateCode> with SingleTickerProviderSt
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Container(
-          padding: EdgeInsets.symmetric(vertical: 10, horizontal: 7),
-          alignment: Alignment.centerLeft,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Icon(
-                Icons.qr_code_rounded,
-                color: Colors.white,
-                size: 30,
-              ),
-              Text('QR Code',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
+    return SafeArea(
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 5, horizontal: 5),
+              alignment: Alignment.centerLeft,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Icon(
+                    Icons.qr_code_rounded,
                     color: Colors.white,
-                  )),
-            ],
-          ),
+                    size: 30,
+                  ),
+                  Text('QR Code',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: Colors.white,
+                      )),
+                ],
+              ),
+            ),
+            SizedBox(height: 15.0),
+            QrImage(
+              data: _token,
+              backgroundColor: Colors.white,
+            ),
+            SizedBox(height: 30),
+            LinearProgressIndicator(value: _animation.value),
+            SizedBox(height: 15.0),
+            Text(
+              'Presenta este codigo QR para poder ingresar a las instalaciones.\n\nPuedes generar un nuevo codigo puslando el boton flotante. Cada codigo tiene un ciclo de vida de 15 segundos.',
+              textAlign: TextAlign.justify,
+              style: TextStyle(fontSize: 17),
+            )
+          ],
         ),
-        QrImage(
-          data: _token,
-          backgroundColor: Colors.white,
-        ),
-        SizedBox(height: 20),
-        LinearProgressIndicator(value: _animation.value),
-      ],
+      ),
     );
   }
 
