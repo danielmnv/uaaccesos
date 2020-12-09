@@ -16,7 +16,6 @@ class _ScanCodeState extends State<ScanCode> {
   HttpsCallable _checkToken = FirebaseFunctions.instance.httpsCallable('validateToken');
 
   CodeController _controller;
-  String _scanned = '';
 
   _ScanCodeState(CodeController controller) {
     _controller = controller;
@@ -25,10 +24,41 @@ class _ScanCodeState extends State<ScanCode> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [Text('Scanner value: $_scanned')], //TODO: Add design and info in the page
+    return SafeArea(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Icon(
+                Icons.qr_code_rounded,
+                color: Colors.white,
+                size: 30,
+              ),
+              Text('Scanner',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    color: Colors.white,
+                  )),
+            ],
+          ),
+          SizedBox(height: 15.0),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(15.0),
+            child: Image.asset('assets/images/demo.jpg'),
+          ),
+          SizedBox(height: 15.0),
+          Text(
+            'Para escanear un código QR, selecciona el botón flotante para abrir la cámara.\n\nAlinea perfectamente la zona marcada con la cámara, apuntando al código de manera que este quede centrado, espera un tiempo para que el escáner pueda leer de forma correcta el contenido.',
+            textAlign: TextAlign.justify,
+            style: TextStyle(fontSize: 17),
+          )
+        ],
+      ),
     );
   }
 
@@ -45,10 +75,6 @@ class _ScanCodeState extends State<ScanCode> {
           content: Text(payload['msg']),
           backgroundColor: payload['ok'] ? Colors.green[600] : Colors.red[900],
         ));
-
-        setState(() {
-          _scanned = codeScanner;
-        });
       }
     } catch (e) {}
   }
