@@ -43,6 +43,7 @@ class LoginState with ChangeNotifier {
 
     if (_loggedIn) {
       _prefs.setBool('isLoggedIn', true);
+      _snackText = 'Welcome back ' + _data['name'] + ' ' + _data['ap_pat'];
     }
 
     notifyListeners();
@@ -85,11 +86,6 @@ class LoginState with ChangeNotifier {
       _snackText = 'The credentials are invalid.';
     }
 
-    if (auth != null) {
-      _snackText = 'Welcome back ' + auth.user.email;
-      return auth.user;
-    }
-
-    return null;
+    return (auth != null) ? auth.user : null;
   }
 }
