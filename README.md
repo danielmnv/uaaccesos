@@ -2,15 +2,28 @@
 
 A new Flutter project.
 
-## Getting Started
+#### Firebase Emulator
 
-This project is a starting point for a Flutter application.
+##### Config
+Firebase y Flutter ya vienen configurados para que al inicar el emulador tanto Firestore y Cloud Functions funcionen en la red local, únicamente Firebase Authentication funciona con el entorno de producción, esto con el propósito de mantener una consistencia entre los usuarios y la información en Firestore.
 
-A few resources to get you started if this is your first Flutter project:
+Configuracion de app:
+```dart
+await Firebase.initializeApp();
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+FirebaseFirestore.instance.settings = Settings(
+host: Platform.isAndroid ? '10.0.2.2:8080' : 'localhost:8080',
+sslEnabled: false,
+persistenceEnabled: false,
+);
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+FirebaseFunctions.instance.useFunctionsEmulator(origin: Platform.isAndroid ? 'http://10.0.2.2:5001' : 'http://localhost:5001');
+``` 
+
+##### Run
+Para ejecutar el emulador de firebase, únicamente se requieren las modalidades de functions y firestore. Para inicializar el módulo de firestore con información se utiliza el directorio **data/** para importar los registros:
+```console
+$ firebase emulators:start --import=data/
+```
+
+> Si se quiere guardar la información manipulda/agregada durante la ejecucion, agregar el parámetro ```--export-on-exit=data/```
