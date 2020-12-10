@@ -35,14 +35,15 @@ exports.validateToken = functions.https.onCall(async (data, context) => {
             if (exists) {
                 let register = await _logs.add({
                     date: fireabse.firestore.Timestamp.fromDate(new Date()),
-                    email: user.email,
+                    door: data.door,
+                    successful: true,
                     user: {
                         ref: ref,
+                        email: user.email,
                         name: user.name,
-                        ap_pat: user.ap_pat
+                        ap_pat: user.ap_pat,
+                        career: user.career
                     },
-                    successful: true,
-                    door: data.door,
                 });
 
                 // Return if log added
