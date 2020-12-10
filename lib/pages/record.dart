@@ -168,7 +168,7 @@ class _RecordPageState extends State<RecordPage> with AfterInitMixin {
   Widget _chipBuilder(String label, int index, Function callable, [IconData icon]) {
     return ChoiceChip(
       label: Text(label),
-      elevation: 1,
+      elevation: 5,
       selected: _chipSelected == index,
       onSelected: callable,
       selectedColor: Colors.white,
