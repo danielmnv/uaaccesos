@@ -270,11 +270,12 @@ class _RecordPageState extends State<RecordPage> with AfterInitMixin {
             text: TextSpan(
               children: [
                 WidgetSpan(
-                    child: Icon(
-                  Icons.sensor_door_sharp,
-                  size: 18,
-                  color: Colors.white70,
-                )),
+                  child: Icon(
+                    Icons.sensor_door_sharp,
+                    size: 18,
+                    color: Colors.white70,
+                  ),
+                ),
                 TextSpan(text: register['door'], style: TextStyle(color: Colors.white70, fontWeight: FontWeight.w500, fontSize: 16.0)),
               ],
             ),

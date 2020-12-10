@@ -18,8 +18,14 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final CodeController _codeController = CodeController();
+  final FilterController _filterController = FilterController();
 
+  GlobalKey<ScaffoldState> _key = new GlobalKey<ScaffoldState>();
   int _lastSelected = 0;
+  int _doorSelected;
+
+  TextEditingController _careerValue = TextEditingController();
+  TextEditingController _idValue = TextEditingController();
 
   void _selectedTab(int index) {
     setState(() {
@@ -27,12 +33,40 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  String _doorLabel(int index) {
+    switch (index) {
+      case 0:
+        return "Norte";
+      case 1:
+        return "Sur";
+      case 2:
+        return "Este";
+      case 3:
+        return "Principal";
+      default:
+        return "";
+    }
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _key,
       appBar: AppBar(
         title: Text(widget.title),
         backgroundColor: ColorPalette.primary,
         actions: <Widget>[
+          _lastSelected == 1
+              ? Padding(
+                  padding: EdgeInsets.only(right: 20.0),
+                  child: GestureDetector(
+                    onTap: () => _key.currentState.openEndDrawer(),
+                    child: Icon(
+                      Icons.filter_list_rounded,
+                      size: 26.0,
+                    ),
+                  ),
+                )
+              : Container(),
           Padding(
             padding: EdgeInsets.only(right: 20.0),
             child: GestureDetector(
@@ -51,13 +85,96 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
+      endDrawer: Drawer(
+        child: ListView(
+          // Important: Remove any padding from the ListView.
+          padding: EdgeInsets.zero,
+          children: <Widget>[
+            SizedBox(
+              height: 80.0,
+              child: DrawerHeader(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text('Filters', style: TextStyle(fontSize: 18.0)),
+                    FlatButton(
+                      child: Text('APPLY'),
+                      onPressed: () {
+                        _filterController.method(_doorLabel(_doorSelected), _idValue.text, _careerValue.text);
+                        Navigator.of(context).pop();
+                      },
+                    )
+                  ],
+                ),
+                decoration: BoxDecoration(
+                  color: ColorPalette.primary,
+                ),
+                margin: EdgeInsets.all(0.0),
+              ),
+            ),
+            Container(
+              margin: const EdgeInsets.only(left: 10.0, top: 20.0, bottom: 20.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "DOOR",
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.blueGrey,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Wrap(
+                    spacing: 8.0,
+                    children: List<Widget>.generate(
+                      4,
+                      (int index) {
+                        return ChoiceChip(
+                          label: Text(_doorLabel(index)),
+                          selected: _doorSelected == index,
+                          selectedColor: Colors.white,
+                          elevation: 5,
+                          onSelected: (bool selected) {
+                            setState(() {
+                              _doorSelected = index;
+                            });
+                          },
+                        );
+                      },
+                    ).toList(),
+                  ),
+                ],
+              ),
+            ),
+            _filterInput(_idValue, TextInputType.number, "ID", Icons.account_box_outlined),
+            SizedBox(height: 20),
+            _filterInput(_careerValue, TextInputType.text, "Career", Icons.book_outlined),
+            SizedBox(height: 40),
+            FlatButton(
+              child: Text('RESET ALL'),
+              textColor: ColorPalette.secondary,
+              onPressed: () {
+                _filterController.method("", "", "");
+                Navigator.of(context).pop();
+
+                setState(() {
+                  _doorSelected = null;
+                  _idValue.clear();
+                  _careerValue.clear();
+                });
+              },
+            )
+          ],
+        ),
+      ),
       body: IndexedStack(
         index: _lastSelected,
         children: [
-          QrCodePage(
-            controller: _codeController,
-          ),
-          RecordPage(),
+          QrCodePage(controller: _codeController),
+          RecordPage(controller: _filterController),
         ],
       ),
       bottomNavigationBar: BottomNavBar(
@@ -81,6 +198,23 @@ class _HomePageState extends State<HomePage> {
             )
           : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+    );
+  }
+
+  Widget _filterInput(TextEditingController controller, TextInputType type, String label, IconData icon) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: type,
+      decoration: InputDecoration(
+        hintText: label,
+        hintStyle: TextStyle(color: Colors.blueGrey),
+        suffixIcon: Icon(
+          icon,
+          color: Colors.blueGrey,
+        ),
+        border: InputBorder.none,
+        filled: true,
+      ),
     );
   }
 }
