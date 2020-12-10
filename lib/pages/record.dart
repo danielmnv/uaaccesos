@@ -23,11 +23,19 @@ class RecordPage extends StatefulWidget {
 
 class _RecordPageState extends State<RecordPage> with AfterInitMixin {
   FilterController _controller;
+
   CollectionReference _logs = FirebaseFirestore.instance.collection('logs');
-  Stream<QuerySnapshot> _query;
+  Stream<QuerySnapshot> _stream;
+  Query _query;
+
+  Map<String, dynamic> _userType;
+  DateTime _pickerDate;
 
   DateTime _selectedDate;
-  Map<String, dynamic> _userType;
+  String _selectedDoor;
+  String _careerTexted;
+  String _idTexted;
+
   int _chipSelected = 0;
 
   _RecordPageState(FilterController controller) {
@@ -35,11 +43,23 @@ class _RecordPageState extends State<RecordPage> with AfterInitMixin {
     _controller.method = _addFilters;
   }
 
+  void _addFilters(String door, String id, String career) {
+    setState(() {
+      _careerTexted = career;
+      _selectedDoor = door;
+      _idTexted = id;
+
+      _dateQuery(_selectedDate);
+      _getSnapshots();
+    });
+  }
+
   void _allDates(int index) {
     setState(() {
       _chipSelected = index;
 
-      _dateQuery(null, null, true);
+      _dateQuery(null);
+      _getSnapshots();
     });
   }
 
@@ -49,7 +69,8 @@ class _RecordPageState extends State<RecordPage> with AfterInitMixin {
     setState(() {
       _chipSelected = index;
 
-      _dateQuery(DateTime(now.year, now.month, now.day), DateTime(now.year, now.month, now.day + 1));
+      _dateQuery(DateTime(now.year, now.month, now.day));
+      _getSnapshots();
     });
   }
 
@@ -58,7 +79,7 @@ class _RecordPageState extends State<RecordPage> with AfterInitMixin {
 
     final DateTime picked = await showDatePicker(
       context: context,
-      initialDate: _selectedDate != null ? _selectedDate : today, // Refer step 1
+      initialDate: _pickerDate != null ? _pickerDate : today, // Refer step 1
       firstDate: DateTime(2000),
       lastDate: DateTime(today.year, today.month, today.day),
       confirmText: 'LIST',
@@ -66,18 +87,35 @@ class _RecordPageState extends State<RecordPage> with AfterInitMixin {
     if (picked != null)
       setState(() {
         _chipSelected = index;
-        _selectedDate = picked;
+        _pickerDate = picked;
 
-        _dateQuery(picked, DateTime(_selectedDate.year, _selectedDate.month, _selectedDate.day + 1));
+        _dateQuery(picked);
+        _getSnapshots();
       });
   }
 
-  void _dateQuery(DateTime start, DateTime end, [bool init = false]) {
-    Query q = !init
-        ? _logs.where("date", isGreaterThanOrEqualTo: start).where("date", isLessThan: end).orderBy("date", descending: true)
+  void _dateQuery(DateTime start) {
+    _selectedDate = start;
+
+    _query = (start != null)
+        ? _logs
+            .where("date", isGreaterThanOrEqualTo: start)
+            .where("date", isLessThan: DateTime(start.year, start.month, start.day + 1))
+            .orderBy("date", descending: true)
         : _logs.orderBy("date", descending: true);
 
-    _query = (!_userType['isAdmin']) ? q.where("email", isEqualTo: _userType['email']).snapshots() : q.snapshots();
+    if (!_userType['isAdmin']) _query = _query.where("user.email", isEqualTo: _userType['email']);
+  }
+
+  void _getSnapshots() {
+    if (_selectedDoor?.isNotEmpty ?? false) _query = _query.where("door", isEqualTo: _selectedDoor);
+
+    if (_userType['isAdmin']) {
+      if (_idTexted?.isNotEmpty ?? false) _query = _query.where("user.email", isEqualTo: ("al" + _idTexted + "@edu.uaa.mx"));
+      if (_careerTexted?.isNotEmpty ?? false) _query = _query.where("user.career", isEqualTo: _careerTexted);
+    }
+
+    _stream = _query.snapshots();
   }
 
   @override
@@ -85,7 +123,8 @@ class _RecordPageState extends State<RecordPage> with AfterInitMixin {
     bool isAdmin = Provider.of<LoginState>(context).userProp('admin');
     _userType = {"isAdmin": isAdmin, "email": (!isAdmin) ? Provider.of<LoginState>(context).userProp("email") : ''};
 
-    _dateQuery(null, null, true);
+    _dateQuery(null);
+    _getSnapshots();
   }
 
   @override
@@ -117,7 +156,7 @@ class _RecordPageState extends State<RecordPage> with AfterInitMixin {
           width: 15,
         ),
         _chipBuilder(
-          _selectedDate == null ? 'Custom' : DateFormat.yMd().format(_selectedDate),
+          _pickerDate == null ? 'Custom' : DateFormat.yMd().format(_pickerDate),
           2,
           (bool selected) => _selectDate(context, 2),
           Icons.date_range_rounded,
@@ -148,7 +187,7 @@ class _RecordPageState extends State<RecordPage> with AfterInitMixin {
   Widget _logsList() {
     return Expanded(
       child: StreamBuilder<QuerySnapshot>(
-        stream: _query,
+        stream: _stream,
         builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasData) {
             List<QueryDocumentSnapshot> docs = snapshot.data.docs;
@@ -157,7 +196,7 @@ class _RecordPageState extends State<RecordPage> with AfterInitMixin {
                   (doc) => {
                     'door': doc['door'],
                     'date': DateFormat.yMMMd().add_Hm().format(doc['date'].toDate()),
-                    'id': doc['email'].split("@")[0],
+                    'id': doc['user']['email'].split("@")[0],
                     'initials': doc['user']['name'][0] + doc['user']['ap_pat'][0],
                   },
                 )
