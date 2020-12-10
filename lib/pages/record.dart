@@ -6,22 +6,34 @@ import 'package:provider/provider.dart';
 import 'package:uaaccesos/classes/colors.dart';
 import 'package:uaaccesos/classes/login_state.dart';
 
+class FilterController {
+  void Function(String a, String b, String c) method;
+}
+
 class RecordPage extends StatefulWidget {
   static Route<dynamic> route() => MaterialPageRoute(builder: (context) => RecordPage());
 
-  RecordPage({Key key}) : super(key: key);
+  RecordPage({Key key, this.controller}) : super(key: key);
+
+  final FilterController controller;
 
   @override
-  _RecordPageState createState() => _RecordPageState();
+  _RecordPageState createState() => _RecordPageState(controller);
 }
 
 class _RecordPageState extends State<RecordPage> with AfterInitMixin {
+  FilterController _controller;
   CollectionReference _logs = FirebaseFirestore.instance.collection('logs');
   Stream<QuerySnapshot> _query;
 
   DateTime _selectedDate;
   Map<String, dynamic> _userType;
   int _chipSelected = 0;
+
+  _RecordPageState(FilterController controller) {
+    _controller = controller;
+    _controller.method = _addFilters;
+  }
 
   void _allDates(int index) {
     setState(() {
