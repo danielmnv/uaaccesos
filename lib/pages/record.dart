@@ -19,7 +19,7 @@ class _RecordPageState extends State<RecordPage> with AfterInitMixin {
   CollectionReference _logs = FirebaseFirestore.instance.collection('logs');
   Stream<QuerySnapshot> _query;
 
-  DateTime _selectedDate = DateTime.now();
+  DateTime _selectedDate;
   Map<String, dynamic> _userType;
   int _chipSelected = 0;
 
@@ -41,12 +41,14 @@ class _RecordPageState extends State<RecordPage> with AfterInitMixin {
     });
   }
 
-  Future<void> _selectDate(BuildContext context, int index) async {
+  void _selectDate(BuildContext context, int index) async {
+    DateTime today = DateTime.now();
+
     final DateTime picked = await showDatePicker(
       context: context,
-      initialDate: _selectedDate, // Refer step 1
+      initialDate: _selectedDate != null ? _selectedDate : today, // Refer step 1
       firstDate: DateTime(2000),
-      lastDate: DateTime(2021),
+      lastDate: DateTime(today.year, today.month, today.day),
       confirmText: 'LIST',
     );
     if (picked != null)
@@ -98,22 +100,36 @@ class _RecordPageState extends State<RecordPage> with AfterInitMixin {
         SizedBox(
           width: 15,
         ),
-        _chipBuilder("Today", 1, (bool selected) => _todayDate(1)),
+        _chipBuilder("Today", 1, (bool selected) => _todayDate(1), Icons.calendar_today_rounded),
         SizedBox(
           width: 15,
         ),
-        _chipBuilder("Custom Date", 2, (bool selected) => _selectDate(context, 2)),
+        _chipBuilder(
+          _selectedDate == null ? 'Custom' : DateFormat.yMd().format(_selectedDate),
+          2,
+          (bool selected) => _selectDate(context, 2),
+          Icons.date_range_rounded,
+        ),
       ],
     );
   }
 
-  Widget _chipBuilder(String label, int index, Function callable) {
+  Widget _chipBuilder(String label, int index, Function callable, [IconData icon]) {
     return ChoiceChip(
       label: Text(label),
       elevation: 1,
       selected: _chipSelected == index,
       onSelected: callable,
       selectedColor: Colors.white,
+      avatar: icon != null
+          ? InkWell(
+              child: Icon(
+                icon,
+                size: 18,
+                color: _chipSelected == index ? Colors.blueGrey : Colors.white,
+              ),
+            )
+          : null,
     );
   }
 
@@ -135,16 +151,35 @@ class _RecordPageState extends State<RecordPage> with AfterInitMixin {
                 )
                 .toList();
 
-            return ListView.separated(
-              itemCount: docs.length,
-              itemBuilder: (BuildContext context, int index) => _register(registers.elementAt(index)),
-              separatorBuilder: (BuildContext context, int index) {
-                return Container(
-                  color: Colors.blueAccent.withOpacity(0.15),
-                  height: 3.0,
-                );
-              },
-            );
+            return (docs.length > 0)
+                ? ListView.separated(
+                    itemCount: docs.length,
+                    itemBuilder: (BuildContext context, int index) => _register(registers.elementAt(index)),
+                    separatorBuilder: (BuildContext context, int index) {
+                      return Container(
+                        color: Colors.blueAccent.withOpacity(0.15),
+                        height: 3.0,
+                      );
+                    },
+                  )
+                : Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/images/nodata.png',
+                          height: 200,
+                          color: ColorPalette.secondary,
+                        ),
+                        SizedBox(height: 35),
+                        Text(
+                          'Nothing to show!',
+                          style: TextStyle(fontSize: 18),
+                        )
+                      ],
+                    ),
+                  );
           }
 
           return CircularProgressIndicator();

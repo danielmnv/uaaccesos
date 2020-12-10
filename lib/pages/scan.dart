@@ -52,7 +52,7 @@ class _ScanCodeState extends State<ScanCode> {
             SizedBox(height: 15.0),
             ClipRRect(
               borderRadius: BorderRadius.circular(15.0),
-              child: Image.asset('assets/images/demo.jpg'),
+              child: Image.asset('assets/images/demo.png'),
             ),
             SizedBox(height: 15.0),
             Text(
