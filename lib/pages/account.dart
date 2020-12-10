@@ -31,6 +31,7 @@ class _AccountPageState extends State<AccountPage> {
     return Center(
       child: ListView(
         children: [
+          SizedBox(height: 10),
           ListTile(
             leading: GestureDetector(
               behavior: HitTestBehavior.translucent,
@@ -40,7 +41,7 @@ class _AccountPageState extends State<AccountPage> {
                 padding: EdgeInsets.symmetric(vertical: 4.0),
                 alignment: Alignment.center,
                 child: CircleAvatar(
-                  backgroundImage: NetworkImage('https://icons.iconarchive.com/icons/diversity-avatars/avatars/1024/batman-icon.png'),
+                  child: Icon(Icons.person_sharp, color: Colors.white),
                   backgroundColor: Colors.black,
                 ),
               ),
@@ -48,23 +49,11 @@ class _AccountPageState extends State<AccountPage> {
             title: Text(data['email']),
             dense: true,
           ),
-          ListTile(
-            title: Text(data['admin'] ? data['door'] : data['career']),
-            dense: false,
-          ),
+          _itemUserProp(data['admin'] ? "DOOR" : "CAREER", data['admin'] ? data['door'] : data['career']),
           Divider(),
-          ListTile(
-            title: Text(data['username']),
-            dense: false,
-          ),
-          ListTile(
-            title: Text(data['name']),
-            dense: false,
-          ),
-          ListTile(
-            title: Text(data['ap_pat']),
-            dense: false,
-          ),
+          _itemUserProp("USERNAME", data['username']),
+          _itemUserProp("NAME", data['name']),
+          _itemUserProp("LAST NAME", data['ap_pat']),
           Divider(),
           ListTile(
             leading: GestureDetector(
@@ -88,6 +77,28 @@ class _AccountPageState extends State<AccountPage> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _itemUserProp(String title, String subtitle) {
+    return ListTile(
+      title: Text(
+        title,
+        style: TextStyle(
+          fontSize: 12,
+          color: Colors.blueGrey,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      subtitle: Text(
+        subtitle,
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 17.0,
+          height: 1.6,
+        ),
+      ),
+      dense: false,
     );
   }
 

@@ -217,7 +217,7 @@ class _HomePageState extends State<HomePage> {
       keyboardType: type,
       decoration: InputDecoration(
         hintText: label,
-        hintStyle: TextStyle(color: Colors.blueGrey),
+        hintStyle: TextStyle(color: Colors.blueGrey, fontWeight: FontWeight.bold),
         suffixIcon: Icon(
           icon,
           color: Colors.blueGrey,

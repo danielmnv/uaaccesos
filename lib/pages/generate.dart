@@ -31,7 +31,7 @@ class _GenerateCodeState extends State<GenerateCode> with SingleTickerProviderSt
 
     _getToken(false);
 
-    _animationController = AnimationController(duration: const Duration(seconds: 15), vsync: this);
+    _animationController = AnimationController(duration: const Duration(minutes: 1), vsync: this);
     _animation = Tween(begin: 1.0, end: 0.0).animate(_animationController)
       ..addListener(() {
         setState(() {
@@ -88,7 +88,7 @@ class _GenerateCodeState extends State<GenerateCode> with SingleTickerProviderSt
             LinearProgressIndicator(value: _animation.value),
             SizedBox(height: 15.0),
             Text(
-              'Presenta este codigo QR para poder ingresar a las instalaciones.\n\nPuedes generar un nuevo codigo puslando el boton flotante. Cada codigo tiene un ciclo de vida de 15 segundos.',
+              'Presenta este código QR para poder ingresar a las instalaciones.\n\nPuedes generar uno nuevo puslando el boton flotante. Cada código tiene un ciclo de vida de un minuto.',
               textAlign: TextAlign.justify,
               style: TextStyle(fontSize: 17),
             )
