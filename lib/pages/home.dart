@@ -149,10 +149,7 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
-            _filterInput(_idValue, TextInputType.number, "ID", Icons.account_box_outlined),
-            SizedBox(height: 20),
-            _filterInput(_careerValue, TextInputType.text, "Career", Icons.book_outlined),
-            SizedBox(height: 40),
+            _adminFilters(),
             FlatButton(
               child: Text('RESET ALL'),
               textColor: ColorPalette.secondary,
@@ -199,6 +196,19 @@ class _HomePageState extends State<HomePage> {
           : null,
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
     );
+  }
+
+  Widget _adminFilters() {
+    return (Provider.of<LoginState>(context).userProp('admin'))
+        ? Column(
+            children: [
+              _filterInput(_idValue, TextInputType.number, "ID", Icons.account_box_outlined),
+              SizedBox(height: 20),
+              _filterInput(_careerValue, TextInputType.text, "Career", Icons.book_outlined),
+              SizedBox(height: 40)
+            ],
+          )
+        : SizedBox(height: 20);
   }
 
   Widget _filterInput(TextEditingController controller, TextInputType type, String label, IconData icon) {
