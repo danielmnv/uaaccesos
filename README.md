@@ -2,7 +2,13 @@
 
 A new Flutter project.
 
-#### Firebase Emulator
+### Requisitos
+```console
+$ npm install -g firebase-tools
+$ cd functions/ && npm install
+```
+
+### Firebase Emulator
 
 ##### Config
 Firebase y Flutter ya vienen configurados para que al inicar el emulador tanto Firestore y Cloud Functions funcionen en la red local, únicamente Firebase Authentication funciona con el entorno de producción, esto con el propósito de mantener una consistencia entre los usuarios y la información en Firestore.
