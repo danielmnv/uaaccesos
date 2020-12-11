@@ -71,12 +71,15 @@ class _ScanCodeState extends State<ScanCode> {
       String codeScanner = await BarcodeScanner.scan(); //barcode scnner
 
       if (codeScanner.isNotEmpty) {
-        final https = await _checkToken.call({"token": codeScanner, "door": Provider.of<LoginState>(context).userProp('door')});
+        final https = await _checkToken.call({"token": codeScanner, "door": Provider.of<LoginState>(context, listen: false).userProp('door')});
         final payload = https.data;
 
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           duration: Duration(seconds: 6),
-          content: Text(payload['msg']),
+          content: Text(
+            payload['msg'],
+            style: TextStyle(color: Colors.white),
+          ),
           backgroundColor: payload['ok'] ? Colors.green[600] : Colors.red[900],
         ));
       }
